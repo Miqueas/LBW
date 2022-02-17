@@ -11,7 +11,7 @@ These .exe files provided here installs Lua in different base path depending of 
 
 ## Multiple lua installations
 
-You can have, by example, Lua 5.1.x and Lua 5.3.x installed, and use it like (if you have them in `PATH`:
+You can have, by example, Lua 5.1.x and Lua 5.3.x installed, and use it like (if you have them in `PATH`):
 
 ```
 lua51 my_script.lua
