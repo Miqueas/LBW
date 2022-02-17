@@ -1,7 +1,7 @@
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
 
-OutFile "Lua_v511_64-Bits.exe"
+OutFile "Lua_v511_32-Bits.exe"
 
 Name "Lua 5.1.1"
 Icon "icon.ico"
@@ -59,7 +59,7 @@ Function .onInit
   ; --------------------------------------------------------------
   ; Sets the installation directory depending on user permissions
   ${If} $0 == "Admin"
-    StrCpy $INSTDIR "$PROGRAMFILES64\Lua51"
+    StrCpy $INSTDIR "$PROGRAMFILES\Lua51"
     Push True
     Pop $IsAdmin
   ${Else}
