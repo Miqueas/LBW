@@ -79,6 +79,7 @@ Section "-Install"
   ; -----------------
   ; Files to install
   File "lua-5.1.2\lua51.exe"
+  File "lua-5.1.2\luac51.exe"
   File "lua-5.1.2\lua51.dll"
   File "icon.ico"
 
