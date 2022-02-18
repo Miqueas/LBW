@@ -34,7 +34,7 @@ Var /Global IsAdmin
 PageEx License
   Caption ": License notice"
   LicenseText "License notice, please read before installing this software. If you accept the license terms, click the $\"I understand$\" button." "I understand"
-  LicenseData "lua-%X.X.X%\COPYRIGHT"
+  LicenseData "LuaLicense"
 PageExEnd
 
 PageEx Directory
