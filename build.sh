@@ -119,7 +119,7 @@ else
   SedScript+=" s/\%LUAC_DEL_FILE\%/$LuacDel/g;"
 fi
 
-LegalCopy=$(grep -Px "Copyright \(C\) [0-9]{0,4}\-[0-9]{0,4} Lua\.org\, PUC-Rio\." LuaLicense)
+LegalCopy="Since 1994, today (2022) Lua.org, PUC-Rio."
 SedScript+=" s/\%LEGAL\_COPY\%/$LegalCopy/g;"
 
 case $Bits in
@@ -133,3 +133,30 @@ i "created NSIS script for Lua $Version"
 sed -f "SedScript" $NSIBaseScript > $NSIScriptFilename
 t "makensis $NSIScriptFilename"
 makensis $NSIScriptFilename
+
+t "mkdir -p Releases"
+mkdir -p Releases
+t "cp Lua_v${FSVersion}_$Bits-Bits.{exe,zip} Releases"
+mv "Lua_v${FSVersion}_$Bits-Bits."{exe,zip} "Releases"
+t "cd Releases"
+cd "Releases"
+t "sha256sum Lua_v${FSVersion}_$Bits-Bits.{exe,zip} >> Lua_v${FSVersion}.checksums"
+sha256sum "Lua_v${FSVersion}_$Bits-Bits."{exe,zip} >> "Lua_v${FSVersion}.checksums"
+t "cd .."
+cd ..
+
+# --------
+# Cleanup
+i "cleaning up..."
+rm -rf $WorkFolder
+rm $NSIScriptFilename
+rm SedScript
+
+if [[ $FSVersion == "510" ]]; then
+  _V=$(echo $Version | sed 's/\..$//')
+  rm "lua-$_V.tar.gz"
+else
+  rm $TarFilename
+fi
+
+i "done!"
