@@ -134,16 +134,22 @@ sed -f "SedScript" $NSIBaseScript > $NSIScriptFilename
 t "makensis $NSIScriptFilename"
 makensis $NSIScriptFilename
 
-t "mkdir -p Releases"
-mkdir -p Releases
-t "cp Lua_v${FSVersion}_$Bits-Bits.{exe,zip} Releases"
-mv "Lua_v${FSVersion}_$Bits-Bits."{exe,zip} "Releases"
-t "cd Releases"
-cd "Releases"
-t "sha256sum Lua_v${FSVersion}_$Bits-Bits.{exe,zip} >> Lua_v${FSVersion}.checksums"
-sha256sum "Lua_v${FSVersion}_$Bits-Bits."{exe,zip} >> "Lua_v${FSVersion}.checksums"
-t "cd .."
-cd ..
+RDir="Releases/$FSVersion/"
+RFiles=(
+  "Lua_v${FSVersion}_$Bits-Bits.exe"
+  "Lua_v${FSVersion}_$Bits-Bits.zip"
+)
+
+t "mkdir -p $RDir"
+mkdir -p $RDir
+t "mv ${RFiles[@]} $RDir"
+mv ${RFiles[@]} "$RDir"
+t "cd $RDir"
+cd "$RDir"
+t "sha256sum ${RFiles[@]} >> Lua_v${FSVersion}.checksums"
+sha256sum ${RFiles[@]} >> "Lua_v${FSVersion}.checksums"
+t "cd ../../"
+cd ../../
 
 # --------
 # Cleanup
