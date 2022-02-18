@@ -91,5 +91,5 @@ p "zip $ZipFilename *.exe *.dll"
 p "mv $ZipFilename .."
 # mv $ZipFilename ..
 
-NSIScriptContent=$(echo $NSIBaseScript | sed -b "s/(\%X\.X\.X\%)/$Version/g")
+NSIScriptContent=$(echo $NSIBaseScript | sed -b "s/\%X\.X\.X\%/$Version/g")
 echo $NSIScriptContent > $NSIScriptFilename
