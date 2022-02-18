@@ -55,6 +55,8 @@ if [[ $FSVersion == "511" ]] || [[ $FSVersion == "510" ]]; then
   unset BinFiles[luac]
 fi
 
+i "building Lua $Version ($Bits-bits)"
+
 if [[ $FSVersion == "510" ]]; then
   _V=$(echo $Version | sed 's/\..$//')
   t "wget https://www.lua.org/ftp/lua-$_V.tar.gz"
