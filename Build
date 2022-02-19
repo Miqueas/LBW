@@ -123,8 +123,8 @@ LegalCopy="Since 1994, today (2022) Lua.org, PUC-Rio."
 SedScript+=" s/\%LEGAL\_COPY\%/$LegalCopy/g;"
 
 case $Bits in
-  32 ) SedScript+=" s/\%PROGRAM\_FILES\%/\$PROGRAMFILES/g" ;;
-  64 ) SedScript+=" s/\%PROGRAM\_FILES\%/\$PROGRAMFILES64/g" ;;
+  32 ) SedScript+=" s/\%PROGRAM\_FILES\%/\$PROGRAMFILES/g;" ;;
+  64 ) SedScript+=" s/\%PROGRAM\_FILES\%/\$PROGRAMFILES64/g;" ;;
 esac
 
 i "created sed script"
