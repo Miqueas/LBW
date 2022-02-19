@@ -15,154 +15,48 @@ Version=$1
 declare Bits
 
 case $Version in
-  5.0* | 4* | 3* | 2* | 1* )
-    err "this script only works for Lua 5.1+"
+  2.0.4 | 2.0.5 | 2.1.0-beta1 | 2.1.0-beta2 | 2.1.0-beta3 ) ;;
+  * )
+    err "this script only works for LuaJIT 2.0.5+"
     exit 1
     ;;
 esac
-
-# Ensures to pass a correct version
-if [[ ! $(echo $Version | grep -P "[0-9]\.[0-9]\.[0-9]") ]]; then
-  err "version must be in format: v.v.v"
-  exit 2
-fi
 
 case $MSYSTEM in
   MINGW32 ) Bits="32" ;;
   MINGW64 ) Bits="64" ;;
 esac
 
-declare Copyright
-declare NSIScriptContent
-
-FSVersion="$(echo $Version | sed 's/\.//g')"
-SVersion="$(echo $FSVersion | sed 's/.$//')"
-TarFilename="lua-$Version.tar.gz"
-TarURL="https://www.lua.org/ftp/$TarFilename"
-TarFolder="lua-$Version"
+FSVersion="$(echo $Version | sed 's/\.//g' | sed 's/\-//g')"
+TarFilename="v$Version.tar.gz"
+TarURL="https://github.com/LuaJIT/LuaJIT/archive/refs/tags/$TarFilename"
+TarFolder="LuaJIT-$Version"
 WorkFolder="$TarFolder-$Bits"
-ZipFilename="Lua_v${FSVersion}_$Bits-Bits.zip"
-NSIBaseScript="LuaBase.nsi"
-NSIScriptFilename="Lua_v${FSVersion}_$Bits-Bits.nsi"
+ZipFilename="LuaJIT_v${FSVersion}_$Bits-Bits.zip"
+NSIBaseScript="LuaJITBase.nsi"
+NSIScriptFilename="LuaJIT_v${FSVersion}_$Bits-Bits.nsi"
 declare -A BinFiles=(
-  [lua]="lua$SVersion.exe"
-  [luac]="luac$SVersion.exe"
-  [dll]="lua$SVersion.dll"
+  [luajit]="luajit$FSVersion.exe"
 )
 
-# This versions of Lua doesn't provide a Lua compiler in mingw
-if [[ $FSVersion == "511" ]] || [[ $FSVersion == "510" ]]; then
-  unset BinFiles[luac]
-fi
-
-i "building Lua $Version ($Bits-bits)"
-
-if [[ $FSVersion == "510" ]]; then
-  _V=$(echo $Version | sed 's/\..$//')
-  t "wget https://www.lua.org/ftp/lua-$_V.tar.gz"
-  wget https://www.lua.org/ftp/lua-$_V.tar.gz
-  t "tar -xf lua-$_V.tar.gz"
-  tar -xf lua-$_V.tar.gz
-  t "mv lua-$_V/ $WorkFolder/"
-  mv lua-$_V/ $WorkFolder/
-else
-  t "wget $TarURL"
-  wget $TarURL
-  t "tar -xf $TarFilename"
-  tar -xf $TarFilename
-  t "mv $TarFolder/ $WorkFolder/"
-  mv $TarFolder/ $WorkFolder/
-fi
-
-t "cd $WorkFolder/"
-cd $WorkFolder/
-t "make mingw"
-make mingw
-t "cp src/*.exe ."
-cp src/*.exe .
-t "cp src/*.dll ."
-cp src/*.dll .
-t "mv ${BinFiles[lua]:0:3}.exe ${BinFiles[lua]}"
-mv "${BinFiles[lua]:0:3}.exe" ${BinFiles[lua]}
-
-if [[ $FSVersion != "511" ]] && [[ $FSVersion != "510" ]]; then
-  t "mv ${BinFiles[luac]:0:4}.exe ${BinFiles[luac]}"
-  mv "${BinFiles[luac]:0:4}.exe" ${BinFiles[luac]}
-fi
-
+i "building LuaJIT $Version ($Bits-bits)"
+t "wget $TarURL"
+wget $TarURL
+t "tar -xf $TarFilename"
+tar -xf $TarFilename
+t "mv $TarFolder $WorkFolder"
+mv $TarFolder $WorkFolder
+t "cd $WorkFolder"
+cd $WorkFolder
+t "make"
+make
+t "cp src/*.{exe,dll} ."
+cp src/*.{exe,dll} .
+t "mv ${BinFiles[luajit]:0:6}.exe ${BinFiles[luajit]}"
+mv "${BinFiles[luajit]:0:6}.exe" ${BinFiles[luajit]}
 t "zip $ZipFilename *.exe *.dll"
 zip $ZipFilename *.exe *.dll
 t "mv $ZipFilename .."
 mv $ZipFilename ..
 t "cd .."
 cd ..
-
-# ----------------------------
-# Installer specific commands
-
-# The sed script used to write the NSIS script installer for the
-# given Lua version
-SedScript="s/\%X\.X\.X\%/$Version/g;
-s/\%AA\%/$Bits/g;
-s/\%FSV\%/$FSVersion/g;
-s/\%SV\%/$SVersion/g;"
-
-LuacSupportMsg="; This version of Lua doesn't provide a 'luac' binary"
-LuacFile="File \"$WorkFolder\\\\${BinFiles[luac]}\""
-LuacDel="Delete \"\$INSTDIR\\\\${BinFiles[luac]}\""
-
-if [[ $FSVersion == "511" ]] || [[ $FSVersion == "510" ]]; then
-  SedScript+=" s/\%LUAC_INST_FILE\%/$LuacSupportMsg/g;"
-  SedScript+=" s/\%LUAC_DEL_FILE\%/$LuacSupportMsg/g;"
-else
-  SedScript+=" s/\%LUAC_INST_FILE\%/$LuacFile/g;"
-  SedScript+=" s/\%LUAC_DEL_FILE\%/$LuacDel/g;"
-fi
-
-LegalCopy="Since 1994, today (2022) Lua.org, PUC-Rio."
-SedScript+=" s/\%LEGAL\_COPY\%/$LegalCopy/g;"
-
-case $Bits in
-  32 ) SedScript+=" s/\%PROGRAM\_FILES\%/\$PROGRAMFILES/g" ;;
-  64 ) SedScript+=" s/\%PROGRAM\_FILES\%/\$PROGRAMFILES64/g" ;;
-esac
-
-i "created sed script"
-echo $SedScript > SedScript
-i "created NSIS script for Lua $Version"
-sed -f "SedScript" $NSIBaseScript > $NSIScriptFilename
-t "makensis $NSIScriptFilename"
-makensis $NSIScriptFilename
-
-RDir="Releases/$FSVersion/"
-RFiles=(
-  "Lua_v${FSVersion}_$Bits-Bits.exe"
-  "Lua_v${FSVersion}_$Bits-Bits.zip"
-)
-
-t "mkdir -p $RDir"
-mkdir -p $RDir
-t "mv ${RFiles[@]} $RDir"
-mv ${RFiles[@]} "$RDir"
-t "cd $RDir"
-cd "$RDir"
-t "sha256sum ${RFiles[@]} >> Lua_v${FSVersion}.checksums"
-sha256sum ${RFiles[@]} >> "Lua_v${FSVersion}.checksums"
-t "cd ../../"
-cd ../../
-
-# --------
-# Cleanup
-i "cleaning up..."
-rm -rf $WorkFolder
-rm $NSIScriptFilename
-rm SedScript
-
-if [[ $FSVersion == "510" ]]; then
-  _V=$(echo $Version | sed 's/\..$//')
-  rm "lua-$_V.tar.gz"
-else
-  rm $TarFilename
-fi
-
-i "done!"
