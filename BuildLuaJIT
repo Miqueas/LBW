@@ -15,7 +15,7 @@ Version=$1
 declare Bits
 
 case $Version in
-  2.0.4 | 2.0.5 | 2.1.0-beta1 | 2.1.0-beta2 | 2.1.0-beta3 ) ;;
+  2.0.0 | 2.0.1 | 2.0.2 | 2.0.3 | 2.0.4 | 2.0.5 | 2.1.0-beta1 | 2.1.0-beta2 | 2.1.0-beta3 ) ;;
   * )
     err "this script only works for LuaJIT 2.0.5+"
     exit 1
