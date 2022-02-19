@@ -42,7 +42,7 @@ TarURL="https://www.lua.org/ftp/$TarFilename"
 TarFolder="lua-$Version"
 WorkFolder="$TarFolder-$Bits"
 ZipFilename="Lua_v${FSVersion}_$Bits-Bits.zip"
-NSIBaseScript="Base.nsi"
+NSIBaseScript="LuaBase.nsi"
 NSIScriptFilename="Lua_v${FSVersion}_$Bits-Bits.nsi"
 declare -A BinFiles=(
   [lua]="lua$SVersion.exe"
@@ -114,7 +114,7 @@ case $Bits in
 esac
 
 i "created sed script"
-echo $SedScript
+echo $SedScript > SedScript
 i "created NSIS script for Lua $Version"
 sed -f "SedScript" $NSIBaseScript > $NSIScriptFilename
 

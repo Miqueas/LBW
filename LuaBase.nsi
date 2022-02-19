@@ -4,7 +4,7 @@
 OutFile "Lua_v%FSV%_%AA%-Bits.exe"
 
 Name "Lua %X.X.X%"
-Icon "icon.ico"
+Icon "LuaIcon.ico"
 
 ; File > Properties > Details
 VIAddVersionKey /Lang=0 "ProductName" "The Lua programming language"
@@ -81,7 +81,7 @@ Section "-Install"
   File "lua-%X.X.X%-%AA%\lua%SV%.exe"
   %LUAC_INST_FILE%
   File "lua-%X.X.X%-%AA%\lua%SV%.dll"
-  File "icon.ico"
+  File "LuaIcon.ico"
 
   ; ------------------------
   ; Creates the uninstaller
@@ -91,7 +91,7 @@ Section "-Install"
   ; Uninstall info
   ${If} $IsAdmin == True
     WriteRegStr HKLM "${URegPath}" "DisplayName" "The Lua programming language"
-    WriteRegStr HKLM "${URegPath}" "DisplayIcon" "$\"$INSTDIR\icon.ico$\""
+    WriteRegStr HKLM "${URegPath}" "DisplayIcon" "$\"$INSTDIR\LuaIcon.ico$\""
     WriteRegStr HKLM "${URegPath}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
     WriteRegStr HKLM "${URegPath}" "InstallLocation" "$\"$INSTDIR$\""
     WriteRegStr HKLM "${URegPath}" "DisplayVersion" "%X.X.X%"
@@ -99,7 +99,7 @@ Section "-Install"
     WriteRegStr HKLM "${URegPath}" "URLInfoAbout" "https://lua.org/"
   ${Else}
     WriteRegStr HKCU "${URegPath}" "DisplayName" "The Lua programming language"
-    WriteRegStr HKCU "${URegPath}" "DisplayIcon" "$\"$INSTDIR\icon.ico$\""
+    WriteRegStr HKCU "${URegPath}" "DisplayIcon" "$\"$INSTDIR\LuaIcon.ico$\""
     WriteRegStr HKCU "${URegPath}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
     WriteRegStr HKCU "${URegPath}" "InstallLocation" "$\"$INSTDIR$\""
     WriteRegStr HKCU "${URegPath}" "DisplayVersion" "%X.X.X%"
@@ -141,7 +141,7 @@ Section "Uninstall"
   Delete "$INSTDIR\lua%SV%.exe"
   %LUAC_DEL_FILE%
   Delete "$INSTDIR\lua%SV%.dll"
-  Delete "$INSTDIR\icon.ico"
+  Delete "$INSTDIR\LuaIcon.ico"
   DetailPrint "Removed all files"
 
   ; --------------------------
