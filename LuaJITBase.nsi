@@ -1,17 +1,17 @@
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
 
-OutFile "Lua_v%FSV%_%AA%-Bits.exe"
+OutFile "LuaJIT_v%FSV%_%AA%-Bits.exe"
 
 Name "LuaJIT %X.X.X%"
-Icon "LuaIcon.ico"
+; Icon "LuaIcon.ico"
 
 ; File > Properties > Details
-VIAddVersionKey /Lang=0 "ProductName" "The Lua programming language"
+VIAddVersionKey /Lang=0 "ProductName" "The Just-In-Time (JIT) Compiler for Lua"
 VIAddVersionKey /Lang=0 "ProductVersion" "%X.X.X%"
-VIAddVersionKey /Lang=0 "CompanyName" "PUC-Rio"
+VIAddVersionKey /Lang=0 "CompanyName" "Mike Pall"
 VIAddVersionKey /Lang=0 "LegalCopyright" "%LEGAL_COPY%"
-VIAddVersionKey /Lang=0 "FileDescription" "Installer for the Lua programming language"
+VIAddVersionKey /Lang=0 "FileDescription" "Installer for the Just-In-Time (JIT) Compiler for Lua"
 ; Required to prevent wanings
 VIAddVersionKey /Lang=0 "FileVersion" ""
 ; File version
@@ -27,7 +27,7 @@ RequestExecutionLevel User
 Var /Global IsAdmin
 
 ; For uninstall info
-!define URegPath "Software\Microsoft\Windows\CurrentVersion\Uninstall\Lua%SV%"
+!define URegPath "Software\Microsoft\Windows\CurrentVersion\Uninstall\LuaJIT%SV%"
 
 ; -------------------------------------------------------------
 ; Pages of the installer, in the same order that will be shown
@@ -39,7 +39,7 @@ PageExEnd
 
 PageEx Directory
   Caption ": Selec installation directory"
-  DirText "Select where to isntall Lua %X.X.X% (optional). If you choose a custom directory, please make sure this installer has write permissions."
+  DirText "Select where to isntall LuaJIT %X.X.X% (optional). If you choose a custom directory, please make sure this installer has write permissions."
 PageExEnd
 
 Page Components
@@ -59,11 +59,11 @@ Function .onInit
   ; --------------------------------------------------------------
   ; Sets the installation directory depending on user permissions
   ${If} $0 == "Admin"
-    StrCpy $INSTDIR "%PROGRAM_FILES%\Lua%SV%"
+    StrCpy $INSTDIR "%PROGRAM_FILES%\LuaJIT%SV%"
     Push True
     Pop $IsAdmin
   ${Else}
-    StrCpy $INSTDIR "$LOCALAPPDATA\Lua%SV%"
+    StrCpy $INSTDIR "$LOCALAPPDATA\LuaJIT%SV%"
     Push False
     Pop $IsAdmin
   ${EndIf}
@@ -78,9 +78,8 @@ Section "-Install"
 
   ; -----------------
   ; Files to install
-  File "lua-%X.X.X%-%AA%\lua%SV%.exe"
-  %LUAC_INST_FILE%
-  File "lua-%X.X.X%-%AA%\lua%SV%.dll"
+  File "LuaJIT-%X.X.X%-%AA%\luajit%FSV%.exe"
+  File "LuaJIT-%X.X.X%-%AA%\lua51.dll"
   File "LuaIcon.ico"
 
   ; ------------------------
@@ -90,21 +89,19 @@ Section "-Install"
   ; ---------------
   ; Uninstall info
   ${If} $IsAdmin == True
-    WriteRegStr HKLM "${URegPath}" "DisplayName" "The Lua programming language"
-    WriteRegStr HKLM "${URegPath}" "DisplayIcon" "$\"$INSTDIR\LuaIcon.ico$\""
+    WriteRegStr HKLM "${URegPath}" "DisplayName" "The Just-In-Time (JIT) Compiler for Lua"
     WriteRegStr HKLM "${URegPath}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
     WriteRegStr HKLM "${URegPath}" "InstallLocation" "$\"$INSTDIR$\""
     WriteRegStr HKLM "${URegPath}" "DisplayVersion" "%X.X.X%"
-    WriteRegStr HKLM "${URegPath}" "Publisher" "PUC-Rio"
-    WriteRegStr HKLM "${URegPath}" "URLInfoAbout" "https://lua.org/"
+    WriteRegStr HKLM "${URegPath}" "Publisher" "Mike Pall"
+    WriteRegStr HKLM "${URegPath}" "URLInfoAbout" "https://luajit.org/"
   ${Else}
-    WriteRegStr HKCU "${URegPath}" "DisplayName" "The Lua programming language"
-    WriteRegStr HKCU "${URegPath}" "DisplayIcon" "$\"$INSTDIR\LuaIcon.ico$\""
+    WriteRegStr HKCU "${URegPath}" "DisplayName" "The Just-In-Time (JIT) Compiler for Lua"
     WriteRegStr HKCU "${URegPath}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
     WriteRegStr HKCU "${URegPath}" "InstallLocation" "$\"$INSTDIR$\""
     WriteRegStr HKCU "${URegPath}" "DisplayVersion" "%X.X.X%"
-    WriteRegStr HKCU "${URegPath}" "Publisher" "PUC-Rio"
-    WriteRegStr HKCU "${URegPath}" "URLInfoAbout" "https://lua.org/"
+    WriteRegStr HKCU "${URegPath}" "Publisher" "Mike Pall"
+    WriteRegStr HKCU "${URegPath}" "URLInfoAbout" "https://luajit.org/"
   ${EndIf}
 
   ; ---------------------------------------------------------------
@@ -119,9 +116,9 @@ Section "-Install"
   ${EndIf}
 SectionEnd
 
-Section "Add Lua %X.X.X% to PATH"
+Section "Add LuaJIT %X.X.X% to PATH"
   ; ---------------------
-  ; Adds Lua to PATH
+  ; Adds LuaJIT to PATH
   ${If} $IsAdmin == True
     EnVar::SetHKLM
   ${Else}
@@ -138,10 +135,8 @@ Section "Uninstall"
   ; -----------------
   ; Delete the files
   Delete "$INSTDIR\uninstall.exe"
-  Delete "$INSTDIR\lua%SV%.exe"
-  %LUAC_DEL_FILE%
-  Delete "$INSTDIR\lua%SV%.dll"
-  Delete "$INSTDIR\LuaIcon.ico"
+  Delete "$INSTDIR\luajit%FSV%.exe"
+  Delete "$INSTDIR\lua51.dll"
   DetailPrint "Removed all files"
 
   ; --------------------------
