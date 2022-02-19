@@ -27,14 +27,14 @@ RequestExecutionLevel User
 Var /Global IsAdmin
 
 ; For uninstall info
-!define URegPath "Software\Microsoft\Windows\CurrentVersion\Uninstall\LuaJIT%SV%"
+!define URegPath "Software\Microsoft\Windows\CurrentVersion\Uninstall\LuaJIT%FSV%"
 
 ; -------------------------------------------------------------
 ; Pages of the installer, in the same order that will be shown
 PageEx License
   Caption ": License notice"
   LicenseText "License notice, please read before installing this software. If you accept the license terms, click the $\"I understand$\" button." "I understand"
-  LicenseData "LuaLicense"
+  LicenseData "LuaJITLicense"
 PageExEnd
 
 PageEx Directory
@@ -59,11 +59,11 @@ Function .onInit
   ; --------------------------------------------------------------
   ; Sets the installation directory depending on user permissions
   ${If} $0 == "Admin"
-    StrCpy $INSTDIR "%PROGRAM_FILES%\LuaJIT%SV%"
+    StrCpy $INSTDIR "%PROGRAM_FILES%\LuaJIT%FSV%"
     Push True
     Pop $IsAdmin
   ${Else}
-    StrCpy $INSTDIR "$LOCALAPPDATA\LuaJIT%SV%"
+    StrCpy $INSTDIR "$LOCALAPPDATA\LuaJIT%FSV%"
     Push False
     Pop $IsAdmin
   ${EndIf}
@@ -80,7 +80,6 @@ Section "-Install"
   ; Files to install
   File "LuaJIT-%X.X.X%-%AA%\luajit%FSV%.exe"
   File "LuaJIT-%X.X.X%-%AA%\lua51.dll"
-  File "LuaIcon.ico"
 
   ; ------------------------
   ; Creates the uninstaller
