@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+for m in 2.{0,1}; do
+  case $m in
+    2.0 ) for p in $m.{0,1,2,3,4,5}; do ./BuildLuaJIT $p; done ;;
+    2.1 ) for p in $m.0-beta{1,2,3}; do ./BuildLuaJIT $p; done ;;
+  esac
+done
