@@ -22,5 +22,4 @@ But with minor versions isn't possible (i.e., Lua 5.2.1 and Lua 5.2.3), the inst
 
 ## Pending
 
- - LuaJIT
  - Moonjit
